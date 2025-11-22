@@ -1,27 +1,28 @@
-using System;
-using System.Threading.Tasks;
-
 namespace Shuttle.Core.Reflection;
 
 public static class ObjectExtensions
 {
-    public static void TryDispose(this object o)
+    extension(object o)
     {
-        if (o is IDisposable disposable)
+        public void TryDispose()
         {
-            disposable.Dispose();
+            if (o is IDisposable disposable)
+            {
+                disposable.Dispose();
+            }
         }
-    }
 
-    public static async Task TryDisposeAsync(this object o)
-    {
-        if (o is IAsyncDisposable disposable)
+        public async Task TryDisposeAsync()
         {
-            await disposable.DisposeAsync().ConfigureAwait(false);
-        }
-        else
-        {
-            o.TryDispose();
+            if (o is IAsyncDisposable disposable)
+            {
+                await disposable.DisposeAsync().ConfigureAwait(false);
+            }
+            else
+            {
+                // ReSharper disable once MethodHasAsyncOverload
+                o.TryDispose();
+            }
         }
     }
 }

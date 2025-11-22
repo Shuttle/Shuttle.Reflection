@@ -1,10 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyModel;
 using Shuttle.Core.Contract;
 
@@ -70,7 +65,7 @@ public class ReflectionService : IReflectionService
 
     public async Task<Type?> GetTypeAsync(string typeName)
     {
-        return await Task.FromResult(Type.GetType(Guard.AgainstNullOrEmptyString(typeName),
+        return await Task.FromResult(Type.GetType(Guard.AgainstEmpty(typeName),
             assemblyName =>
             {
                 Assembly assembly;

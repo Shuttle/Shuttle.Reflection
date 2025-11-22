@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text.RegularExpressions;
 using Shuttle.Core.Contract;
 
@@ -8,118 +5,114 @@ namespace Shuttle.Core.Reflection;
 
 public static class TypeExtensions
 {
-    public static void AssertDefaultConstructor(this Type type)
+    extension(Type type)
     {
-        Guard.AgainstNull(type);
-
-        AssertDefaultConstructor(type, $"Type '{type.FullName}' does not have a default constructor.");
-    }
-
-    public static void AssertDefaultConstructor(this Type type, string message)
-    {
-        if (!type.HasDefaultConstructor())
+        public void AssertDefaultConstructor()
         {
-            throw new NotSupportedException(message);
+            Guard.AgainstNull(type);
+
+            AssertDefaultConstructor(type, $"Type '{type.FullName}' does not have a default constructor.");
         }
-    }
 
-    public static Type? FirstInterface(this Type type, Type of)
-    {
-        var interfaces = type.GetInterfaces();
-        var name = $"I{type.Name}";
-
-        foreach (var i in interfaces)
+        public void AssertDefaultConstructor(string message)
         {
-            if (i.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase))
+            if (!type.HasDefaultConstructor())
             {
-                return i;
+                throw new NotSupportedException(message);
             }
         }
 
-        return interfaces.FirstOrDefault(item => IsCastableTo(item, of));
-    }
-
-    public static Type? GetGenericArgument(this Type type, Type generic)
-    {
-        return type.GetInterfaces()
-            .Where(item => item.IsGenericType && item.GetGenericTypeDefinition().IsAssignableFrom(generic))
-            .Select(item => item.GetGenericArguments()[0]).FirstOrDefault();
-    }
-
-    public static bool HasDefaultConstructor(this Type type)
-    {
-        return type.GetConstructor(Type.EmptyTypes) != null;
-    }
-
-    public static Type? InterfaceMatching(this Type type, string includeRegexPattern, string? excludeRegexPattern = null)
-    {
-        var includeRegex = new Regex(includeRegexPattern, RegexOptions.IgnoreCase);
-        
-        Regex? excludeRegex = null;
-
-        if (!string.IsNullOrEmpty(excludeRegexPattern))
+        public Type? FirstInterface(Type of)
         {
-            excludeRegex = new(excludeRegexPattern, RegexOptions.IgnoreCase);
-        }
+            var interfaces = type.GetInterfaces();
+            var name = $"I{type.Name}";
 
-        foreach (var i in type.GetInterfaces())
-        {
-            var fullName = i.FullName ?? string.Empty;
-
-            if (includeRegex.IsMatch(fullName) && (excludeRegex == null || !excludeRegex.IsMatch(fullName)))
+            foreach (var i in interfaces)
             {
-                return i;
+                if (i.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    return i;
+                }
             }
+
+            return interfaces.FirstOrDefault(item => IsCastableTo(item, of));
         }
 
-        return null;
-    }
+        public Type? GetGenericArgument(Type generic)
+        {
+            return type.GetInterfaces()
+                .Where(item => item.IsGenericType && item.GetGenericTypeDefinition().IsAssignableFrom(generic))
+                .Select(item => item.GetGenericArguments()[0]).FirstOrDefault();
+        }
 
-    public static IEnumerable<Type> InterfacesCastableTo<T>(this Type type)
-    {
-        return type.InterfacesCastableTo(typeof(T));
-    }
+        public bool HasDefaultConstructor()
+        {
+            return type.GetConstructor(Type.EmptyTypes) != null;
+        }
 
-    public static IEnumerable<Type> InterfacesCastableTo(this Type type, Type interfaceType)
-    {
-        Guard.AgainstNull(interfaceType);
+        public Type? InterfaceMatching(string includeRegexPattern, string? excludeRegexPattern = null)
+        {
+            var includeRegex = new Regex(includeRegexPattern, RegexOptions.IgnoreCase);
 
-        return type.GetInterfaces().Where(i => IsCastableTo(i, interfaceType)).ToList();
-    }
+            Regex? excludeRegex = null;
 
-    public static bool IsCastableTo(this Type type, Type otherType)
-    {
-        Guard.AgainstNull(type);
-        Guard.AgainstNull(otherType);
+            if (!string.IsNullOrEmpty(excludeRegexPattern))
+            {
+                excludeRegex = new(excludeRegexPattern, RegexOptions.IgnoreCase);
+            }
 
-        return type.IsGenericType && otherType.IsGenericType
-            ? otherType.GetGenericTypeDefinition().IsAssignableFrom(type.GetGenericTypeDefinition())
-            : otherType.IsGenericType
-                ? IsCastableToGenericType(type, otherType)
-                : otherType.IsAssignableFrom(type);
-    }
+            foreach (var i in type.GetInterfaces())
+            {
+                var fullName = i.FullName ?? string.Empty;
 
-    private static bool IsCastableToGenericType(Type type, Type generic)
-    {
-        return
-            type.GetInterfaces()
-                .Any(i => i.IsGenericType && i.GetGenericTypeDefinition().IsAssignableFrom(generic));
-    }
+                if (includeRegex.IsMatch(fullName) && (excludeRegex == null || !excludeRegex.IsMatch(fullName)))
+                {
+                    return i;
+                }
+            }
 
-    /// <summary>
-    ///     Returns a IEnumerable&lt;Type&gt; containing the interface that has the same name as the type prefixed by an 'I';
-    ///     else null.
-    /// </summary>
-    /// <param name="type"></param>
-    /// <example>If the type name is Example it will try to locate interface IExample.</example>
-    /// <returns></returns>
-    public static Type? MatchingInterface(this Type type)
-    {
-        var name = $"I{type.Name}";
+            return null;
+        }
 
-        return type.GetInterfaces()
-            .Where(i => i.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase))
-            .Select(i => i)
-            .FirstOrDefault();
+        public IEnumerable<Type> InterfacesCastableTo<T>()
+        {
+            return type.InterfacesCastableTo(typeof(T));
+        }
+
+        public IEnumerable<Type> InterfacesCastableTo(Type interfaceType)
+        {
+            Guard.AgainstNull(interfaceType);
+
+            return type.GetInterfaces().Where(i => IsCastableTo(i, interfaceType)).ToList();
+        }
+
+        public bool IsCastableTo(Type otherType)
+        {
+            Guard.AgainstNull(type);
+            Guard.AgainstNull(otherType);
+
+            return type.IsGenericType && otherType.IsGenericType
+                ? otherType.GetGenericTypeDefinition().IsAssignableFrom(type.GetGenericTypeDefinition())
+                : otherType.IsGenericType
+                    ? IsCastableToGenericType(type, otherType)
+                    : otherType.IsAssignableFrom(type);
+        }
+
+        private static bool IsCastableToGenericType(Type interfaceType, Type generic)
+        {
+            return
+                interfaceType.GetInterfaces()
+                    .Any(i => i.IsGenericType && i.GetGenericTypeDefinition().IsAssignableFrom(generic));
+        }
+
+        public Type? MatchingInterface()
+        {
+            var name = $"I{type.Name}";
+
+            return type.GetInterfaces()
+                .Where(i => i.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase))
+                .Select(i => i)
+                .FirstOrDefault();
+        }
     }
 }

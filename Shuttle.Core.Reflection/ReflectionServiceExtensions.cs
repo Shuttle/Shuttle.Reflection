@@ -1,32 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+﻿using System.Reflection;
 using Shuttle.Core.Contract;
 
 namespace Shuttle.Core.Reflection;
 
 public static class ReflectionServiceExtensions
 {
-    public static async Task<IEnumerable<Assembly>> GetAssembliesAsync(this IReflectionService service)
+    extension(IReflectionService service)
     {
-        return await service.GetMatchingAssembliesAsync(new Regex(".*")).ConfigureAwait(false);
-    }
+        public async Task<IEnumerable<Assembly>> GetAssembliesAsync()
+        {
+            return await service.GetMatchingAssembliesAsync(new(".*")).ConfigureAwait(false);
+        }
 
-    public static async Task<IEnumerable<Assembly>> GetMatchingAssembliesAsync(this IReflectionService service, string regex)
-    {
+        public async Task<IEnumerable<Assembly>> GetMatchingAssembliesAsync(string regex)
+        {
+            return await Guard.AgainstNull(service).GetMatchingAssembliesAsync(new(Guard.AgainstEmpty(regex))).ConfigureAwait(false);
+        }
 
-        return await Guard.AgainstNull(service).GetMatchingAssembliesAsync(new(Guard.AgainstNullOrEmptyString(regex))).ConfigureAwait(false);
-    }
+        public async Task<IEnumerable<Type>> GetTypesCastableToAsync<T>()
+        {
+            return await Guard.AgainstNull(service).GetTypesCastableToAsync(typeof(T)).ConfigureAwait(false);
+        }
 
-    public static async Task<IEnumerable<Type>> GetTypesCastableToAsync<T>(this IReflectionService service)
-    {
-        return await Guard.AgainstNull(service).GetTypesCastableToAsync(typeof(T)).ConfigureAwait(false);
-    }
-
-    public static async Task<IEnumerable<Type>> GetTypesCastableToAsync<T>(this IReflectionService service, Assembly assembly)
-    {
-        return await Guard.AgainstNull(service).GetTypesCastableToAsync(typeof(T), assembly).ConfigureAwait(false);
+        public async Task<IEnumerable<Type>> GetTypesCastableToAsync<T>(Assembly assembly)
+        {
+            return await Guard.AgainstNull(service).GetTypesCastableToAsync(typeof(T), assembly).ConfigureAwait(false);
+        }
     }
 }

@@ -1,4 +1,3 @@
-using System;
 using System.Text;
 using Shuttle.Core.Contract;
 
@@ -6,60 +5,63 @@ namespace Shuttle.Core.Reflection;
 
 public static class ExceptionExtensions
 {
-    public static string AllMessages(this Exception ex)
+    extension(Exception ex)
     {
-        var messages = new StringBuilder();
-
-        var enumerator = ex;
-
-        while (enumerator != null)
+        public string AllMessages()
         {
-            messages.AppendFormat("{0}{1}", messages.Length > 0 ? " / " : string.Empty, enumerator.Message);
+            var messages = new StringBuilder();
 
-            enumerator = enumerator.InnerException;
-        }
+            var enumerator = ex;
 
-        return messages.ToString();
-    }
-
-    public static bool Contains<T>(this Exception ex) where T : Exception
-    {
-        return ex.Find<T>() != null;
-    }
-
-    public static T? Find<T>(this Exception ex) where T : Exception
-    {
-        var enumerator = ex;
-
-        while (enumerator != null)
-        {
-            if (enumerator is T result)
+            while (enumerator != null)
             {
-                return result;
+                messages.Append($"{(messages.Length > 0 ? " / " : string.Empty)}{enumerator.Message}");
+
+                enumerator = enumerator.InnerException;
             }
 
-            enumerator = enumerator.InnerException;
+            return messages.ToString();
         }
 
-        return null;
-    }
-
-    public static Exception TrimLeading<T>(this Exception ex) where T : Exception
-    {
-        var trim = typeof(T);
-
-        var exception = Guard.AgainstNull(ex);
-
-        while (exception.GetType() == trim)
+        public bool Contains<T>() where T : Exception
         {
-            if (exception.InnerException == null)
+            return ex.Find<T>() != null;
+        }
+
+        public T? Find<T>() where T : Exception
+        {
+            var enumerator = ex;
+
+            while (enumerator != null)
             {
-                break;
+                if (enumerator is T result)
+                {
+                    return result;
+                }
+
+                enumerator = enumerator.InnerException;
             }
 
-            exception = exception.InnerException;
+            return null;
         }
 
-        return exception;
+        public Exception TrimLeading<T>() where T : Exception
+        {
+            var trim = typeof(T);
+
+            var exception = Guard.AgainstNull(ex);
+
+            while (exception.GetType() == trim)
+            {
+                if (exception.InnerException == null)
+                {
+                    break;
+                }
+
+                exception = exception.InnerException;
+            }
+
+            return exception;
+        }
     }
 }

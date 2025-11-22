@@ -1,6 +1,4 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 
 namespace Shuttle.Core.Reflection.Tests;
 
@@ -20,6 +18,7 @@ public class ReflectionServiceFixture
         Assert.That((await new ReflectionService().GetTypesCastableToAsync<ISomeClass>()).Count(), Is.EqualTo(1));
     }
 
+    [Test]
     public async Task Should_be_able_to_get_matching_assemblies_async()
     {
         var service = new ReflectionService();

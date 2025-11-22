@@ -1,9 +1,5 @@
 # Shuttle.Core.Reflection
 
-```
-PM> Install-Package Shuttle.Core.Reflection
-```
-
 Provides various methods to facilitate reflection handling.
 
 ## ReflectionService
