@@ -2,33 +2,27 @@
 
 Provides various methods to facilitate reflection handling.
 
-## ReflectionService
+## Instance Extensions
 
 ``` c#
-Task<IEnumerable<Assembly>> GetMatchingAssembliesAsync(Regex regex)
+Task<IEnumerable<Type>> assembly.GetTypesCastableToAsync(Type type)
+Task<IEnumerable<Type>> assembly.GetTypesCastableToAsync<T>();
 ```
 
-Returns a collection of assemblies that have their file name matching the given `Regex` expression.
+Returns all the types in the given `assembly` that can be cast to the `type` or `typeof(T)`.
+
+## Static Extensions
 
 ``` c#
-Task<IEnumerable<Assembly>> GetRuntimeAssembliesAsync()
+Task<IEnumerable<Assembly>> Assembly.GetRuntimeAssembliesAsync()
 ```
 
 Returns a combination of `DependencyContext.Default.GetRuntimeAssemblyNames(Environment.OSVersion.Platform.ToString())` and `AppDomain.CurrentDomain.GetAssemblies()`.
 
 ``` c#
-Task<Type> GetTypeAsync(string typeName)
+Task<IEnumerable<Type>> Assembly.GetTypesCastableToAsync<T>();
+Task<IEnumerable<Type>> Assembly.GetTypesCastableToAsync(Type type);
 ```
 
-Attempts to find the requested type.
-
-``` c#
-Task<IEnumerable<Type>> GetTypesCastableToAsync(Type type, Assembly assembly)
-// and these extensions
-Task<IEnumerable<Type>> GetTypesCastableToAsync<T>();
-Task<IEnumerable<Type>> GetTypesCastableToAsync(Type type);
-Task<IEnumerable<Type>> GetTypesCastableToAsync<T>(Assembly assembly);
-```
-
-Returns all the types in the given `assembly` that can be cast to the `type` or `typeof(T)`; if no `assembly` is provided the all assemblies returned by `GetAssembliesAsync()` will be scanned.
+Returns all the types in all assemblies returned by `Assembly.GetRuntimeAssembliesAsync()` that can be cast to the `type` or `typeof(T)`.
 
