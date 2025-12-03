@@ -11,7 +11,18 @@ public static class AssemblyExtensions
         {
             Guard.AgainstNull(type);
 
-            return await Task.FromResult(Guard.AgainstNull(assembly).GetTypes().Where(item => item.IsCastableTo(type) && !(item.IsInterface && item == type)).ToList());
+            var types = new List<Type>();
+
+            try
+            {
+                types.AddRange(Guard.AgainstNull(assembly).GetTypes());
+            }
+            catch (ReflectionTypeLoadException ex)
+            {
+                types.AddRange(ex.Types.Where(t => t != null)!);
+            }
+
+            return await Task.FromResult(types.Where(item => item.IsCastableTo(type) && !(item.IsInterface && item == type)).ToList());
         }
 
         public async Task<IEnumerable<Type>> GetTypesCastableToAsync<T>()
