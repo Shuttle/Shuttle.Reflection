@@ -10,7 +10,7 @@ dotnet add package Shuttle.Core.Reflection
 
 ## Assembly Extensions
 
-```c#
+```csharp
 Task<IEnumerable<Type>> GetTypesCastableToAsync(this Assembly assembly, Type type)
 Task<IEnumerable<Type>> GetTypesCastableToAsync<T>(this Assembly assembly)
 ```
@@ -19,18 +19,20 @@ Task<IEnumerable<Type>> GetTypesCastableToAsync<T>(this Assembly assembly)
 
 ## Assembly Static Extensions
 
-```c#
-Task<IEnumerable<Assembly>> GetRuntimeAssembliesAsync()
-Task<IEnumerable<Type>> GetTypesCastableToAsync(Type type)
-Task<IEnumerable<Type>> GetTypesCastableToAsync<T>()
+These are static extensions on the `Assembly` class.
+
+```csharp
+Task<IEnumerable<Assembly>> Assembly.GetRuntimeAssembliesAsync()
+Task<IEnumerable<Type>> Assembly.GetTypesCastableToAsync(Type type)
+Task<IEnumerable<Type>> Assembly.GetTypesCastableToAsync<T>()
 ```
 
-- `GetRuntimeAssembliesAsync`: Returns a combination of `DependencyContext.Default.GetRuntimeAssemblyNames(Environment.OSVersion.Platform.ToString())` and `AppDomain.CurrentDomain.GetAssemblies()`.
-- `GetTypesCastableToAsync`: Returns all the types in all assemblies returned by `GetRuntimeAssembliesAsync()` that can be cast to the `type` or `typeof(T)`.
+- `Assembly.GetRuntimeAssembliesAsync`: Returns a combination of `DependencyContext.Default.GetRuntimeAssemblyNames(Environment.OSVersion.Platform.ToString())` and `AppDomain.CurrentDomain.GetAssemblies()`.
+- `Assembly.GetTypesCastableToAsync`: Returns all the types in all assemblies returned by `Assembly.GetRuntimeAssembliesAsync()` that can be cast to the `type` or `typeof(T)`.
 
 ## Enumerable Extensions
 
-```c#
+```csharp
 T? Find<T>(this IEnumerable<object> list) where T : class
 IEnumerable<T> FindAll<T>(this IEnumerable<object> list) where T : class
 T Get<T>(this IEnumerable<object> list) where T : class
@@ -42,31 +44,31 @@ T Get<T>(this IEnumerable<object> list) where T : class
 
 ## Exception Extensions
 
-```c#
+```csharp
 string AllMessages(this Exception ex)
 bool Contains<T>(this Exception ex) where T : Exception
 T? Find<T>(this Exception ex) where T : Exception
 Exception TrimLeading<T>(this Exception ex) where T : Exception
 ```
 
-- `AllMessages`: Traverses the exception and its inner exceptions to concatenate all messages.
+- `AllMessages`: Traverses the exception and its inner exceptions to concatenate all messages, separated by ` / `.
 - `Contains<T>`: Determines whether the exception or any of its inner exceptions are of type `T`.
 - `Find<T>`: Returns the first exception of type `T` found in the exception chain.
 - `TrimLeading<T>`: Removes the outer exception(s) if they are of type `T` and returns the inner exception.
 
 ## Object Extensions
 
-```c#
+```csharp
 void TryDispose(this object o)
 Task TryDisposeAsync(this object o)
 ```
 
 - `TryDispose`: Attempts to cast the object to `IDisposable` and calls `Dispose` if successful.
-- `TryDisposeAsync`: Attempts to cast the object to `IAsyncDisposable` and calls `DisposeAsync`. If not implemented, falls back to `TryDispose`.
+- `TryDisposeAsync`: Attempts to cast the object to `IAsyncDisposable` and calls `DisposeAsync`. If `IAsyncDisposable` is not implemented, it falls back to `TryDispose`.
 
 ## Type Extensions
 
-```c#
+```csharp
 void AssertDefaultConstructor(this Type type)
 void AssertDefaultConstructor(this Type type, string message)
 Type? FirstInterface(this Type type, Type of)
@@ -80,7 +82,7 @@ Type? MatchingInterface(this Type type)
 ```
 
 - `AssertDefaultConstructor`: Throws an exception if the type does not have a default constructor.
-- `FirstInterface`: Returns the first interface that matches the naming convention `I{TypeName}` or is castable to the specified type.
+- `FirstInterface`: Returns the first interface matching the naming convention `I{TypeName}` or, if no such interface is found, the first interface that is castable to the specified type.
 - `GetGenericArgument`: Returns the generic argument for the specified generic type definition.
 - `HasDefaultConstructor`: Determines whether the type has a default constructor.
 - `InterfaceMatching`: Returns the first interface matching the include regex and not matching the exclude regex.
