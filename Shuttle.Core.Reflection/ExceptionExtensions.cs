@@ -9,14 +9,14 @@ public static class ExceptionExtensions
     {
         public string AllMessages()
         {
-            var messages = new StringBuilder();
+            Guard.AgainstNull(ex);
 
+            var messages = new StringBuilder();
             var enumerator = ex;
 
             while (enumerator != null)
             {
                 messages.Append($"{(messages.Length > 0 ? " / " : string.Empty)}{enumerator.Message}");
-
                 enumerator = enumerator.InnerException;
             }
 
@@ -30,6 +30,8 @@ public static class ExceptionExtensions
 
         public T? Find<T>() where T : Exception
         {
+            Guard.AgainstNull(ex);
+
             var enumerator = ex;
 
             while (enumerator != null)
@@ -48,20 +50,16 @@ public static class ExceptionExtensions
         public Exception TrimLeading<T>() where T : Exception
         {
             var trim = typeof(T);
-
             var exception = Guard.AgainstNull(ex);
 
-            while (exception.GetType() == trim)
+            while (exception.GetType() == trim && exception.InnerException != null)
             {
-                if (exception.InnerException == null)
-                {
-                    break;
-                }
-
                 exception = exception.InnerException;
             }
 
-            return exception;
+            return exception.GetType() == trim 
+                ? throw new InvalidOperationException($"The entire exception chain consists of '{trim.FullName}' exceptions.") 
+                : exception;
         }
     }
 }

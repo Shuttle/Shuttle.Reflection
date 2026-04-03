@@ -8,16 +8,14 @@ public static class EnumerableExtensions
     {
         public T? Find<T>() where T : class
         {
-            var matches = FindAll<T>(list).ToList();
+            var matches = list.FindAll<T>().ToList();
 
             if (matches.Count > 1)
             {
                 throw new InvalidOperationException(string.Format(Resources.EnumerableFoundTooManyException, matches.Count, typeof(T).FullName));
             }
 
-            return matches.Count == 1
-                ? matches[0]
-                : null;
+            return matches.Count == 1 ? matches[0] : null;
         }
 
         public IEnumerable<T> FindAll<T>() where T : class
@@ -29,14 +27,9 @@ public static class EnumerableExtensions
 
         public T Get<T>() where T : class
         {
-            var result = Find<T>(list);
+            var result = list.Find<T>();
 
-            if (result == null)
-            {
-                throw new InvalidOperationException(string.Format(Resources.EnemerableNoMatchException, typeof(T).FullName));
-            }
-
-            return result;
+            return result ?? throw new InvalidOperationException(string.Format(Resources.EnemerableNoMatchException, typeof(T).FullName));
         }
     }
 }

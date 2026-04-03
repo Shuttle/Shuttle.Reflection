@@ -7,48 +7,55 @@ public static class AssemblyStaticExtensions
 {
     extension(Assembly)
     {
-        public static async Task<IEnumerable<Assembly>> GetRuntimeAssembliesAsync()
+        public static IEnumerable<Assembly> GetRuntimeAssemblies()
         {
             var result = new List<Assembly>();
             var dependencyContext = DependencyContext.Default;
 
             if (dependencyContext != null)
             {
-                result.AddRange(dependencyContext.GetRuntimeAssemblyNames(Environment.OSVersion.Platform.ToString()).Select(Assembly.Load));
+                foreach (var assemblyName in dependencyContext.RuntimeLibraries.SelectMany(library => library.GetDefaultAssemblyNames(dependencyContext)))
+                {
+                    try
+                    {
+                        result.Add(Assembly.Load(assemblyName));
+                    }
+                    catch (Exception)
+                    {
+                        // ignore
+                    }
+                }
             }
 
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
-                if (result.All(item => item.GetName().Equals(assembly.GetName())))
+                if (result.All(item => item.GetName().Name != assembly.GetName().Name))
                 {
                     result.Add(assembly);
                 }
             }
 
-            return await Task.FromResult(result);
+            return result;
         }
 
-        public static async Task<IEnumerable<Type>> GetTypesCastableToAsync(Type type)
+        public static IEnumerable<Type> FindTypesCastableTo(Type type)
         {
-            var result = new List<Type>();
+            var result = new HashSet<Type>();
 
-            var assemblies = await GetRuntimeAssembliesAsync().ConfigureAwait(false);
-
-            foreach (var assembly in assemblies)
+            foreach (var assembly in Assembly.GetRuntimeAssemblies())
             {
-                var types = await assembly.GetTypesCastableToAsync(type).ConfigureAwait(false);
-
-                types.Where(candidate => result.Find(existing => existing == candidate) == null)
-                    .ToList()
-                    .ForEach(add => result.Add(add));
+                foreach (var candidate in assembly.FindTypesCastableTo(type))
+                {
+                    result.Add(candidate);
+                }
             }
 
             return result;
         }
 
-        public static async Task<IEnumerable<Type>> GetTypesCastableToAsync<T>()
+        public static IEnumerable<Type> FindTypesCastableTo<T>()
         {
-            return await GetTypesCastableToAsync(typeof(T)).ConfigureAwait(false);
+            return Assembly.FindTypesCastableTo(typeof(T));
         }
     }
 }

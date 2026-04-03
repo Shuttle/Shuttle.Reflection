@@ -11,7 +11,7 @@ public static class TypeExtensions
         {
             Guard.AgainstNull(type);
 
-            AssertDefaultConstructor(type, $"Type '{type.FullName}' does not have a default constructor.");
+            type.AssertDefaultConstructor($"Type '{type.FullName}' does not have a default constructor.");
         }
 
         public void AssertDefaultConstructor(string message)
@@ -35,7 +35,7 @@ public static class TypeExtensions
                 }
             }
 
-            return interfaces.FirstOrDefault(item => IsCastableTo(item, of));
+            return interfaces.FirstOrDefault(item => item.IsCastableTo(of));
         }
 
         public Type? GetGenericArgument(Type generic)
@@ -83,7 +83,7 @@ public static class TypeExtensions
         {
             Guard.AgainstNull(interfaceType);
 
-            return type.GetInterfaces().Where(i => IsCastableTo(i, interfaceType)).ToList();
+            return type.GetInterfaces().Where(i => i.IsCastableTo(interfaceType)).ToList();
         }
 
         public bool IsCastableTo(Type otherType)
@@ -94,7 +94,7 @@ public static class TypeExtensions
             return type.IsGenericType && otherType.IsGenericType
                 ? otherType.GetGenericTypeDefinition().IsAssignableFrom(type.GetGenericTypeDefinition())
                 : otherType.IsGenericType
-                    ? IsCastableToGenericType(type, otherType)
+                    ? Type.IsCastableToGenericType(type, otherType)
                     : otherType.IsAssignableFrom(type);
         }
 

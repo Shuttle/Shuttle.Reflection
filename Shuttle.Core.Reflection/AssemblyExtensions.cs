@@ -7,7 +7,7 @@ public static class AssemblyExtensions
 {
     extension(Assembly assembly)
     {
-        public async Task<IEnumerable<Type>> GetTypesCastableToAsync(Type type)
+        public IEnumerable<Type> FindTypesCastableTo(Type type)
         {
             Guard.AgainstNull(type);
 
@@ -22,12 +22,12 @@ public static class AssemblyExtensions
                 types.AddRange(ex.Types.Where(t => t != null)!);
             }
 
-            return await Task.FromResult(types.Where(item => item.IsCastableTo(type) && !(item.IsInterface && item == type)).ToList());
+            return types.Where(item => item.IsCastableTo(type) && !(item.IsInterface && item == type)).ToList();
         }
 
-        public async Task<IEnumerable<Type>> GetTypesCastableToAsync<T>()
+        public IEnumerable<Type> FindTypesCastableTo<T>()
         {
-            return await assembly.GetTypesCastableToAsync(typeof(T)).ConfigureAwait(false);
+            return assembly.FindTypesCastableTo(typeof(T));
         }
     }
 }

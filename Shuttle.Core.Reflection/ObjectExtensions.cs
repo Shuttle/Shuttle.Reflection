@@ -12,17 +12,16 @@ public static class ObjectExtensions
             }
         }
 
-        public async Task TryDisposeAsync()
+        public Task TryDisposeAsync()
         {
-            if (o is IAsyncDisposable disposable)
+            if (o is IAsyncDisposable asyncDisposable)
             {
-                await disposable.DisposeAsync().ConfigureAwait(false);
+                return asyncDisposable.DisposeAsync().AsTask();
             }
-            else
-            {
-                // ReSharper disable once MethodHasAsyncOverload
-                o.TryDispose();
-            }
+
+            o.TryDispose();
+
+            return Task.CompletedTask;
         }
     }
 }
