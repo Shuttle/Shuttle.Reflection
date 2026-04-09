@@ -1,7 +1,7 @@
 using System.Text;
-using Shuttle.Core.Contract;
+using Shuttle.Contract;
 
-namespace Shuttle.Core.Reflection;
+namespace Shuttle.Reflection;
 
 public static class ExceptionExtensions
 {

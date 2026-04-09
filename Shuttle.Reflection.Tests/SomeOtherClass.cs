@@ -1,4 +1,4 @@
-﻿namespace Shuttle.Core.Reflection.Tests;
+﻿namespace Shuttle.Reflection.Tests;
 
 public class SomeOtherClass : ISomeOtherClass
 {

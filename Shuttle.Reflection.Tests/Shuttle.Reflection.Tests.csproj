@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Shuttle.Core.Reflection\Shuttle.Core.Reflection.csproj" />
+    <ProjectReference Include="..\Shuttle.Reflection\Shuttle.Reflection.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,6 +1,6 @@
-using Shuttle.Core.Contract;
+using Shuttle.Contract;
 
-namespace Shuttle.Core.Reflection;
+namespace Shuttle.Reflection;
 
 public class ExceptionRaisedEventArgs(string methodName, Exception exception) : EventArgs
 {

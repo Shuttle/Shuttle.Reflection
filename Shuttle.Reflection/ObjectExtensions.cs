@@ -1,4 +1,4 @@
-namespace Shuttle.Core.Reflection;
+namespace Shuttle.Reflection;
 
 public static class ObjectExtensions
 {

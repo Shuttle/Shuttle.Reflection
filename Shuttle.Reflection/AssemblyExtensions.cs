@@ -1,7 +1,7 @@
-﻿using Shuttle.Core.Contract;
+﻿using Shuttle.Contract;
 using System.Reflection;
 
-namespace Shuttle.Core.Reflection;
+namespace Shuttle.Reflection;
 
 public static class AssemblyExtensions
 {

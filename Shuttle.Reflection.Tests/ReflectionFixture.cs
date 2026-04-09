@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using NUnit.Framework;
 
-namespace Shuttle.Core.Reflection.Tests;
+namespace Shuttle.Reflection.Tests;
 
 [TestFixture]
 public class ReflectionFixture

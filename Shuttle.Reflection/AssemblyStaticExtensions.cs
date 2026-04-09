@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyModel;
 using System.Reflection;
 
-namespace Shuttle.Core.Reflection;
+namespace Shuttle.Reflection;
 
 public static class AssemblyStaticExtensions
 {
