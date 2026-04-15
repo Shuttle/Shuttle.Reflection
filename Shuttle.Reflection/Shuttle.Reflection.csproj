@@ -14,7 +14,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="10.0.3" />
-    <PackageReference Include="Shuttle.Contract" Version="21.0.1-rc3" />
+    <PackageReference Include="Shuttle.Contract" Version="21.0.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -34,7 +34,7 @@
 
   <PropertyGroup>
     <Description>Reflection infrastructure components.</Description>
-    <Version>21.0.1-rc3</Version>
+    <Version>21.0.1</Version>
     <PackageProjectUrl>https://github.com/shuttle/Shuttle.Reflection</PackageProjectUrl>
     <RepositoryUrl>https://github.com/shuttle/Shuttle.Reflection.git</RepositoryUrl>
     <PackageTags>shuttle reflection</PackageTags>
