@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 
-namespace Shuttle.Core.Reflection.Tests;
+namespace Shuttle.Reflection.Tests;
 
 [TestFixture]
 public class EnumerableExtensionsFixture
